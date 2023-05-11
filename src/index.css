@@ -1,13 +1,162 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Lato:wght@300&display=swap");
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-inter;
+  }
+
+  .mp-font {
+    @apply font-inter;
+  }
+
+  /* Font Title */
+  .mp-h1 {
+    @apply text-h1 font-bold mp-font;
+  }
+
+  .mp-h2 {
+    @apply text-h2 font-bold mp-font;
+  }
+
+  .mp-h3 {
+    @apply text-h3 font-bold mp-font;
+  }
+
+  .mp-h4 {
+    @apply text-h4 font-bold mp-font;
+  }
+
+  .mp-h5 {
+    @apply text-h5 font-bold mp-font;
+  }
+
+  .mp-h6 {
+    @apply text-h6 font-bold mp-font;
+  }
+
+  .mp-h7 {
+    @apply text-h7 font-bold mp-font;
+  }
+
+  /* End of Font Title */
+
+  /* Font Subhead */
+  .mp-s1 {
+    @apply text-s1 font-semibold mp-font;
+  }
+
+  .mp-s2 {
+    @apply text-s2 font-semibold mp-font;
+  }
+
+  .mp-s3 {
+    @apply text-s3 font-semibold mp-font;
+  }
+
+  .mp-s4 {
+    @apply text-s4 font-semibold mp-font;
+  }
+
+  /* End of Subhead */
+
+  /* Font Paragraph */
+  .mp-p1 {
+    @apply text-s1 font-normal mp-font;
+  }
+
+  .mp-p2 {
+    @apply text-s2 font-normal mp-font;
+  }
+
+  .mp-p3 {
+    @apply text-s3 font-normal mp-font;
+  }
+
+  .mp-p4 {
+    @apply text-s4 font-normal mp-font;
+  }
+
+  /* End of Paragraph */
+
+  /* text input */
+  .mp-input-field {
+    @apply h-[40px] box-border px-4 border border-neutral-grey mp-p3;
+  }
+
+  .mp-text-transparent {
+    color: transparent;
+  }
+
+  .mp-bg-transparent {
+    background-color: transparent;
+  }
+
+  .mp-loading {
+    @apply w-8 h-8 fill-primary-blue animate-spin bg-no-repeat bg-[url('../Assets/svg/loading_circle.svg')];
+  }
+
+  /* button primary */
+  .mp-button-primary-frame {
+    @apply rounded-[8px] py-1 px-2 mp-p4 inline-block cursor-pointer select-none hover:shadow-md hover:scale-105;
+  }
+
+  /* red */
+  .mp-button-primary-red {
+    @apply mp-button-primary-frame text-neutral-white bg-warning-danger-2;
+  }
+
+  .mp-button-primary-red-active {
+    @apply border-warning-danger-1 text-warning-danger-1 bg-warning-danger-4;
+  }
+
+  /* button secondary */
+  .mp-button-secondary-frame {
+    @apply border rounded-[8px] py-1 px-2 mp-p4 inline-block cursor-pointer select-none hover:shadow-md hover:scale-105;
+  }
+
+  /* red */
+  .mp-button-secondary-red {
+    @apply mp-button-secondary-frame border-warning-danger-2 text-warning-danger-2 bg-neutral-white;
+  }
+
+  .mp-button-secondary-red-active {
+    @apply border-warning-danger-1 text-warning-danger-1 bg-warning-danger-4;
+  }
+
+  /* green */
+  .mp-button-secondary-green {
+    @apply mp-button-secondary-frame border-warning-safe-2 text-warning-safe-2 bg-neutral-white;
+  }
+
+  .mp-button-secondary-green-active {
+    @apply border-warning-safe-1 text-warning-safe-1 bg-warning-safe-4;
+  }
+
+  /* blue */
+  .mp-button-secondary-blue {
+    @apply mp-button-secondary-frame border-secondary-blue-2 text-secondary-blue-2 bg-neutral-white;
+  }
+
+  .mp-button-secondary-blue-active {
+    @apply border-secondary-blue-1 text-secondary-blue-1 bg-secondary-blue-4;
+  }
+
+  /* yellow */
+  .mp-button-secondary-yellow {
+    @apply mp-button-secondary-frame border-warning-caution-2 text-warning-caution-2 bg-neutral-white;
+  }
+
+  .mp-button-secondary-yellow-active {
+    @apply border-warning-caution-1 text-warning-caution-1 bg-warning-caution-4;
+  }
+
+  .mp-button-secondary-disable {
+    @apply border-neutral-dark-grey text-neutral-dark-grey cursor-default hover:shadow-none hover:scale-100;
+  }
+
+  /* end button secondary */
 }
