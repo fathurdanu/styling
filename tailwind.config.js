@@ -1,5 +1,5 @@
 module.exports = {
-  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  content: ["./src/**/*.{js,jsx,ts,tsx,css}"],
   theme: {
     colors: {
       primary: {
@@ -19,11 +19,19 @@ module.exports = {
         teal: "#30D6B0",
         indigo: "#4269F2",
       },
+      neutral: {
+        black: "#404040",
+        "dark-grey": "#BFBFBF",
+        "subtle-grey": "#F3F4F8",
+        grey: "#C7C9D9",
+        "light-grey": "#DFDFDF",
+        white: "#F6F9FF",
+      },
       warning: {
         "danger-1": "#A70000",
         "danger-2": "#D62727",
         "danger-3": "#FF5252",
-        "danger-4": "#FF7B7B",
+        "danger-4": "#FFE4E4",
         "caution-1": "#E69500",
         "caution-2": "#FFB52E",
         "caution-3": "#FFC45C",
@@ -32,14 +40,10 @@ module.exports = {
         "safe-2": "#49AB81",
         "safe-3": "#61CE9F",
         "safe-4": "#B0EADD",
-      },
-      neutral: {
-        black: "#404040",
-        "dark-grey": "#BFBFBF",
-        "subtle-grey": "#F3F4F8",
-        grey: "#C7C9D9",
-        "light-grey": "#DFDFDF",
-        white: "#F6F9FF",
+        "action-1": "#2475BB",
+        "action-2": "#3DA1F6",
+        "action-3": "#A0D3FF",
+        "action-4": "#D8EDFF",
       },
     },
     extend: {
@@ -65,5 +69,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/forms")],
 };
