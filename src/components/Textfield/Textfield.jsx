@@ -2,7 +2,11 @@ import React, { Component } from "react";
 import { twMerge } from "tailwind-merge";
 import generate_style from "./style";
 
-export default class Textfield extends Component {
+export default React.forwardRef((props, ref) => (
+  <Textfield innerref={ref} {...props} />
+));
+
+class Textfield extends Component {
   constructor(props) {
     super(props);
     const { color, size, icon } = this.props;
@@ -27,7 +31,8 @@ export default class Textfield extends Component {
   }
 
   render() {
-    const { children, className, icon, color, size, ...props } = this.props;
+    const { children, className, icon, color, size, innerref, ...props } =
+      this.props;
     const { style, margin, icon_color } = this.state;
 
     return (
@@ -37,7 +42,12 @@ export default class Textfield extends Component {
             <p className={twMerge(icon_color, className)}>{icon}</p>
           </div>
         )}
-        <input {...props} type="text" className={`${style} ${className}`} />
+        <input
+          {...props}
+          ref={innerref}
+          type="text"
+          className={`${style} ${className}`}
+        />
       </div>
     );
   }

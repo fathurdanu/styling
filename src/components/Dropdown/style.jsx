@@ -1,6 +1,12 @@
 import { twMerge } from "tailwind-merge";
 
-export default function generateTailwind(type, color, size, direction) {
+export default function generateTailwind(
+  type,
+  color,
+  size,
+  direction,
+  is_multi
+) {
   const frames = {
     primary: `rounded-[8px] py-1 px-2 inline-block cursor-pointer select-none hover:shadow-md hover:shadow-neutral-black hover:scale-110 bg-neutral-black`,
     secondary: `border rounded-[8px] py-1 px-2 inline-block cursor-pointer select-none hover:shadow-md hover:shadow-neutral-black hover:scale-110`,
@@ -22,9 +28,9 @@ export default function generateTailwind(type, color, size, direction) {
   };
 
   const component_height = {
-    small: "h-[30px]",
-    normal: "h-[38px]",
-    large: "h-[50px]",
+    small: `${is_multi ? "min-h-[30px]" : "h-[30px]"}`,
+    normal: `${is_multi ? "min-h-[38px]" : "h-[38px]"}`,
+    large: `${is_multi ? "min-h-[50px]" : "h-[50px]"}`,
   };
 
   const basic_style = [
@@ -78,6 +84,12 @@ export default function generateTailwind(type, color, size, direction) {
       blue: "hover:bg-warning-action-2",
       yellow: "hover:bg-warning-caution-2",
     },
+    accent: {
+      red: "bg-warning-danger-1",
+      green: "bg-warning-safe-1",
+      blue: "bg-warning-action-1",
+      yellow: "bg-warning-caution-1",
+    },
   };
 
   const icon_color = colors["text"][color];
@@ -85,10 +97,12 @@ export default function generateTailwind(type, color, size, direction) {
   const comp_height = component_height[size];
   const popup_direction = directions[direction];
   const bg_color = colors["bg"][color];
+  const accent_color = colors["accent"][color];
   return {
     style,
     icon_color,
     bg_color,
+    accent_color,
     font_size,
     comp_height,
     popup_direction,

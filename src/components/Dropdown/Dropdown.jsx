@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { twMerge } from "tailwind-merge";
 import Textfield from "../Textfield";
 import { BsSearch } from "react-icons/bs";
+import { IoClose } from "react-icons/io5";
 import generateTailwind from "./style";
 
 const Icon = () => {
@@ -37,61 +38,51 @@ const CloseIcon = () => {
 export default class Dropdown extends Component {
   constructor(props) {
     super(props);
-    this.wrapperRef = React.createRef();
-    const { type, color, size, direction, value, children } = this.props;
+    const { type, color, size, direction, value, children, is_multi } =
+      this.props;
     const {
       style,
       icon_color,
       bg_color,
+      accent_color,
       font_size,
       comp_height,
       popup_direction,
-    } = generateTailwind(type, color, size, direction);
+    } = generateTailwind(type, color, size, direction, is_multi);
+
+    let selected = [];
+    let keys = [];
+    if (value?.length >= 0 && is_multi) {
+      keys = value?.length >= 0 ? Object.keys(value[0]) : [];
+    } else {
+      keys = value ? Object.keys(value) : [];
+    }
+
+    if (keys.includes("value") && keys.includes("label")) {
+      selected = value;
+    } else {
+      selected = is_multi ? [] : null;
+    }
+
+    this.inputRef = React.createRef();
+    this.searchRef = React.createRef();
     this.state = {
       filter_text: "",
       filtered_children: children,
       style,
       icon_color,
       bg_color,
+      accent_color,
       is_active: false,
-      value,
       font_size,
       comp_height,
       popup_direction,
-      selected: {
-        key: "",
-        value: "",
-      },
+      selected: selected,
     };
   }
 
-  componentDidMount() {
-    // Add Event Listner to handle the click that happens outside
-    // the Custom Select Container
-    document.addEventListener("mousedown", this.handleClickOutside);
-    this.setState({
-      defaultSelectText: this.props.defaultText,
-    });
-  }
-
-  componentWillUnmount() {
-    // Remove the event listner on component unmounting
-    document.removeEventListener("mousedown", this.handleClickOutside);
-  }
-
-  handleClickOutside = (e) => {
-    if (
-      !e.target.classList.contains("custom-select-option") &&
-      !e.target.classList.contains("selected-text")
-    ) {
-      this.setState({
-        is_active: false,
-      });
-    }
-  };
-
   componentDidUpdate(prevProps, prevState) {
-    const { type, color, size, direction, onChange } = this.props;
+    const { type, color, size, direction, onChange, is_multi } = this.props;
     const { is_active, selected } = this.state;
     if (
       prevProps.color !== color ||
@@ -99,32 +90,64 @@ export default class Dropdown extends Component {
       prevState.is_active !== is_active ||
       prevProps.direction !== direction
     ) {
-      const { style, icon_color, font_size, comp_height, popup_direction } =
-        generateTailwind(type, color, size, direction);
+      const {
+        style,
+        icon_color,
+        bg_color,
+        accent_color,
+        font_size,
+        comp_height,
+        popup_direction,
+      } = generateTailwind(type, color, size, direction, is_multi);
       this.setState({
         style,
         icon_color,
+        bg_color,
+        accent_color,
         font_size,
         comp_height,
         popup_direction,
       });
     }
 
-    if (prevState.selected.key !== selected.key) {
-      onChange({ key: selected.key, value: selected.value });
+    if (prevState.selected?.value !== selected?.value) {
+      onChange({ value: selected?.value, label: selected?.label });
     }
+
+    if (prevState.is_active !== is_active) {
+      this.setState({
+        filter_text: "",
+      });
+      if (is_active && this.searchRef.current) {
+        this.searchRef.current.focus();
+      }
+    }
+
+    window.addEventListener("click", this.handler);
+    return () => {
+      window.removeEventListener("click", this.handler);
+    };
   }
+
+  handler = (e) => {
+    if (this.inputRef.current && !this.inputRef.current.contains(e.target)) {
+      this.setState({
+        is_active: false,
+      });
+    }
+  };
 
   filterOnChange = (e) => {
     const { children } = this.props;
-    const keywords = e.target.value?.toLowerCase().split(" ");
+    const keywords = e.target.value?.toLowerCase();
     const regex_string = `${keywords
+      .split(" ")
       .map((word) => `(?=.*?${word})`)
       .join("")}.*`;
     const regex_pattern = new RegExp(regex_string);
     if (keywords) {
       const filtered_children = children.filter((item) =>
-        regex_pattern.test(item.props.children?.toLowerCase())
+        regex_pattern.test(item.props?.children?.toLowerCase())
       );
       this.setState({
         filtered_children,
@@ -145,28 +168,66 @@ export default class Dropdown extends Component {
     });
   };
 
-  handleClickOutside(event) {
-    if (this.wrapperRef && !this.wrapperRef.current.contains(event.target)) {
-      this.toggleDropdown();
-    }
-  }
+  removeOption = (option) => {
+    const { selected } = this.state;
+    return selected.filter((o) => o.value !== option.value);
+  };
 
-  setValue = (key, value) => {
-    this.setState({
-      selected: {
-        key,
-        value,
-      },
+  handleClick = (item) => {
+    const { value, children } = item;
+    this.onItemClick({
+      value: value,
+      label: children,
     });
+    this.toggleDropdown();
+  };
+
+  onItemClick = (props) => {
+    const { is_multi, onChange } = this.props;
+    const { selected } = this.state;
+    let newValue;
+    if (is_multi) {
+      if (selected.findIndex((o) => o.value === props.value) >= 0) {
+        newValue = this.removeOption(props);
+      } else {
+        newValue = [...selected, props];
+      }
+    } else {
+      newValue = props;
+    }
+
+    this.setState({
+      selected: newValue,
+    });
+    onChange(newValue);
+  };
+
+  onTagRemove = (props) => {
+    const { onChange } = this.props;
+    const newValue = this.removeOption(props);
+    this.setState({
+      selected: newValue,
+    });
+    onChange(newValue);
   };
 
   render() {
-    const { children, className, color, type, size, filter_on, ...props } =
-      this.props;
+    const {
+      children,
+      className,
+      color,
+      type,
+      size,
+      filter_on,
+      placeholder,
+      is_multi,
+      ...props
+    } = this.props;
     const {
       style,
       icon_color,
       bg_color,
+      accent_color,
       is_active,
       comp_height,
       popup_direction,
@@ -175,29 +236,60 @@ export default class Dropdown extends Component {
       filtered_children,
     } = this.state;
 
+    const getDisplay = () => {
+      if (!selected || selected.length === 0) {
+        return placeholder;
+      }
+      if (is_multi) {
+        return (
+          <div className="flex flex-wrap gap-1">
+            {selected.map((option) => {
+              return (
+                <div
+                  key={option.value}
+                  className={`${accent_color} text-neutral-white mp-p4 py-[2px] px-[6px] rounded-[8px] flex items-center`}
+                >
+                  {option.label}
+                  <span
+                    onClick={(e) => this.onTagRemove(option)}
+                    className="flex mp-h7 items-center text-neutral-white"
+                  >
+                    <IoClose />
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        );
+      }
+      return selected.label;
+    };
+
     return (
       <div className={`relative rounded-[8px] ${comp_height}`}>
         <div
           {...props}
           type=""
-          className={`selected-text ${style} ${className} ${font_size} ${comp_height} flex justify-center`}
+          className={`${style} ${className} ${font_size} ${comp_height} flex justify-between`}
           onClick={() => this.toggleDropdown()}
+          ref={this.inputRef}
         >
-          <div className="w-fit max-w-[85%] whitespace-nowrap overflow-hidden text-ellipsis">
-            {selected.key
-              ? children.find((item) => item.props.value === selected.key)?.[
-                  "props"
-                ]?.["children"]
-              : "Select"}
+          <div className="w-fit whitespace-nowrap overflow-hidden text-ellipsis px-2">
+            {getDisplay()}
           </div>
-          <div className="w-[15%] text-center">
-            {is_active ? <CloseIcon /> : <Icon />}
-          </div>
+          <div className="w-10 text-center">{<Icon />}</div>
         </div>
         {is_active && (
-          <div className="absolute z-50 mt-2 min-w-[200px]">
+          <div
+            className={twMerge(
+              "absolute z-50 mt-2 min-w-[200px]",
+              icon_color,
+              popup_direction
+            )}
+          >
             {filter_on && (
               <Textfield
+                ref={this.searchRef}
                 className="w-full"
                 color={color}
                 icon={<BsSearch />}
@@ -205,22 +297,14 @@ export default class Dropdown extends Component {
                 onChange={this.filterOnChange}
               />
             )}
-            <div
-              ref={this.wrapperRef}
-              className={twMerge(
-                `overflow-y-auto max-h-96 pr-2`,
-                icon_color,
-                popup_direction
-              )}
-            >
+            <div className="overflow-y-auto max-h-96 pr-2">
               {filtered_children?.map((item) => {
                 return (
                   <div
                     key={item.key}
-                    className={`custom-select-option transition ease-in-out duration-75 rounded text-sm py-2 px-4 font-normal block cursor-pointer ${bg_color} hover:text-neutral-white bg-neutral-white mt-1 border ${icon_color}`}
+                    className={`rounded text-sm py-2 px-4 font-normal block cursor-pointer ${bg_color} hover:text-neutral-white bg-neutral-white mt-1 border ${icon_color}`}
                     onClick={() => {
-                      this.setValue(item.props.value, item.props.children);
-                      this.toggleDropdown();
+                      this.handleClick(item.props);
                     }}
                   >
                     {item.props.children}

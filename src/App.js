@@ -4,7 +4,6 @@ import Dropdowns from "./component_list/Dropdowns";
 import Textfields from "./component_list/Textfields";
 import Checkboxs from "./component_list/Checkboxs";
 import LayoutCards from "./component_list/LayoutCards";
-import Selects from "./component_list/Selects";
 
 function App() {
   return (
@@ -14,7 +13,6 @@ function App() {
       <Dropdowns />
       <Checkboxs />
       <LayoutCards />
-      <Selects />
     </div>
   );
 }

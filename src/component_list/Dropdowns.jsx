@@ -28,7 +28,7 @@ export default class Dropdowns extends Component {
 
     return (
       <div className="block w-full mt-14">
-        <div className="w-full mp-center mp-h2">Dropdown</div>
+        <div className="w-full mp-center mp-h2">Dropdown and Select</div>
         {sizes.map((size, i) => (
           <div key={i} className="block w-full mb-14">
             {types.map((type, j) => (
@@ -54,6 +54,9 @@ export default class Dropdowns extends Component {
                       size={size}
                       direction={result}
                       filter_on
+                      // value={[{ value: 3, label: "Pilihan 3" }]}
+                      is_multi
+                      placeholder="Dropdown"
                     >
                       {options.map((item) => (
                         <option key={item.key} value={item.key}>
